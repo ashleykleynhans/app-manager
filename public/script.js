@@ -57,4 +57,16 @@ $(document).ready(function() {
             alert(data);
         });
     });
+
+    $('#stopTTS').click(function () {
+        $.get('/stop_tts', function (data) {
+            alert(data);
+        });
+    });
+
+    $('#startTTS').click(function () {
+        $.get('/start_tts', function (data) {
+            alert(data);
+        });
+    });
 });

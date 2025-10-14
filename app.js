@@ -85,6 +85,26 @@ app.get('/start_invokeai', (req, res) => {
     res.send('Started InvokeAI successfully!');
 });
 
+app.get('/stop_tts', (req, res) => {
+    exec('scripts/stop_tts.sh &', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error stopping TTS WebUI: ${error}`);
+        }
+    });
+
+    res.send('Stopped TTS WebUI successfully!');
+});
+
+app.get('/start_tts', (req, res) => {
+    exec('scripts/start_tts.sh &', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error starting TTS WebUI: ${error}`);
+        }
+    });
+
+    res.send('Started TTS WebUI successfully!');
+});
+
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on http://0.0.0.0:${PORT}`);
 });
