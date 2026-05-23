@@ -4,64 +4,191 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/style.css" />
-    <title>RunPod Application Manager</title>
+    <meta name="theme-color" content="#0a0e08">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <title>RUNPOD :: APP CONTROL</title>
 </head>
-<body class="ocean-theme">
-<div class="container mt-5">
-    <h1 class="text-center">RunPod Application Manager</h1>
-    <div class="table-responsive ocean-table mx-auto">
-        <table class="table table-bordered table-hover">
-            <thead class="thead-dark">
-            <tr>
-                <th>Application</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr id="rowA1111">
-                <td>A1111</td>
-                <td>
-                    <button id="stopA111" class="btn btn-danger">Stop</button>
-                    <button id="startA111" class="btn btn-success">Start</button>
-                </td>
-            </tr>
-            <tr id="rowKohya_ss">
-                <td>Kohya_ss</td>
-                <td>
-                    <button id="stopKohya" class="btn btn-danger">Stop</button>
-                    <button id="startKohya" class="btn btn-success">Start</button>
-                </td>
-            </tr>
-            <tr id="rowComfyUI">
-                <td>ComfyUI</td>
-                <td>
-                    <button id="stopComfyUI" class="btn btn-danger">Stop</button>
-                    <button id="startComfyUI" class="btn btn-success">Start</button>
-                </td>
-            </tr>
-            <tr id="rowInvokeAI">
-                <td>InvokeAI</td>
-                <td>
-                    <button id="stopInvokeAI" class="btn btn-danger">Stop</button>
-                    <button id="startInvokeAI" class="btn btn-success">Start</button>
-                </td>
-            </tr>
-            <tr id="rowTTS_WebUI">
-                <td>TTS WebUI</td>
-                <td>
-                    <button id="stopTTS" class="btn btn-danger">Stop</button>
-                    <button id="startTTS" class="btn btn-success">Start</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+<body>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+<main class="shell">
+    <header class="header">
+        <div class="header-top">
+            <div class="header-cluster">
+                <span class="chip">RPD//04</span>
+                <span class="status-line">
+                    <span class="dot dot--live" aria-hidden="true"></span>
+                    <span class="status-text">SESSION ACTIVE</span>
+                </span>
+            </div>
+            <div class="header-cluster header-cluster--right">
+                <span class="muted">UTC</span>
+                <span class="clock" id="clock">--:--:--</span>
+            </div>
+        </div>
+
+        <h1 class="title">
+            <span class="title-eyebrow">RUNPOD&nbsp;&nbsp;//&nbsp;&nbsp;NODE&nbsp;CONTROL</span>
+            <span class="title-display">App.Control<span class="title-cursor" aria-hidden="true"></span></span>
+        </h1>
+
+        <p class="lede">
+            Spin up &amp; tear down on-pod inference workloads. One switch per rig.
+            No SSH. No fuss.
+        </p>
+    </header>
+
+    <section class="modules" id="modules" aria-label="Applications">
+        <article class="module" id="rowA1111" data-app="A1111">
+            <header class="module-head">
+                <span class="module-id">MOD::01</span>
+                <span class="module-state" data-state="idle">
+                    <span class="dot" aria-hidden="true"></span>
+                    <span class="module-state-text">IDLE</span>
+                </span>
+            </header>
+            <div class="module-body">
+                <h2 class="module-title">A1111</h2>
+                <p class="module-sub">Stable Diffusion WebUI</p>
+                <p class="module-note">txt2img · img2img · scripts</p>
+            </div>
+            <div class="module-actions">
+                <button class="btn btn--start" type="button" data-action="start" data-target="a1111" data-label="A1111">
+                    <span class="btn-glyph" aria-hidden="true">▶</span>
+                    <span class="btn-text">INITIATE</span>
+                </button>
+                <button class="btn btn--stop" type="button" data-action="stop" data-target="a1111" data-label="A1111">
+                    <span class="btn-glyph" aria-hidden="true">■</span>
+                    <span class="btn-text">HALT</span>
+                </button>
+            </div>
+        </article>
+
+        <article class="module" id="rowKohya_ss" data-app="Kohya_ss">
+            <header class="module-head">
+                <span class="module-id">MOD::02</span>
+                <span class="module-state" data-state="idle">
+                    <span class="dot" aria-hidden="true"></span>
+                    <span class="module-state-text">IDLE</span>
+                </span>
+            </header>
+            <div class="module-body">
+                <h2 class="module-title">Kohya_ss</h2>
+                <p class="module-sub">LoRA &amp; finetune trainer</p>
+                <p class="module-note">DreamBooth · LoRA · text-encoder</p>
+            </div>
+            <div class="module-actions">
+                <button class="btn btn--start" type="button" data-action="start" data-target="kohya" data-label="Kohya_ss">
+                    <span class="btn-glyph" aria-hidden="true">▶</span>
+                    <span class="btn-text">INITIATE</span>
+                </button>
+                <button class="btn btn--stop" type="button" data-action="stop" data-target="kohya" data-label="Kohya_ss">
+                    <span class="btn-glyph" aria-hidden="true">■</span>
+                    <span class="btn-text">HALT</span>
+                </button>
+            </div>
+        </article>
+
+        <article class="module" id="rowComfyUI" data-app="ComfyUI">
+            <header class="module-head">
+                <span class="module-id">MOD::03</span>
+                <span class="module-state" data-state="idle">
+                    <span class="dot" aria-hidden="true"></span>
+                    <span class="module-state-text">IDLE</span>
+                </span>
+            </header>
+            <div class="module-body">
+                <h2 class="module-title">ComfyUI</h2>
+                <p class="module-sub">Node-based diffusion graph</p>
+                <p class="module-note">workflows · custom nodes · API</p>
+            </div>
+            <div class="module-actions">
+                <button class="btn btn--start" type="button" data-action="start" data-target="comfyui" data-label="ComfyUI">
+                    <span class="btn-glyph" aria-hidden="true">▶</span>
+                    <span class="btn-text">INITIATE</span>
+                </button>
+                <button class="btn btn--stop" type="button" data-action="stop" data-target="comfyui" data-label="ComfyUI">
+                    <span class="btn-glyph" aria-hidden="true">■</span>
+                    <span class="btn-text">HALT</span>
+                </button>
+            </div>
+        </article>
+
+        <article class="module" id="rowInvokeAI" data-app="InvokeAI">
+            <header class="module-head">
+                <span class="module-id">MOD::04</span>
+                <span class="module-state" data-state="idle">
+                    <span class="dot" aria-hidden="true"></span>
+                    <span class="module-state-text">IDLE</span>
+                </span>
+            </header>
+            <div class="module-body">
+                <h2 class="module-title">InvokeAI</h2>
+                <p class="module-sub">Unified inference suite</p>
+                <p class="module-note">canvas · node graph · models</p>
+            </div>
+            <div class="module-actions">
+                <button class="btn btn--start" type="button" data-action="start" data-target="invokeai" data-label="InvokeAI">
+                    <span class="btn-glyph" aria-hidden="true">▶</span>
+                    <span class="btn-text">INITIATE</span>
+                </button>
+                <button class="btn btn--stop" type="button" data-action="stop" data-target="invokeai" data-label="InvokeAI">
+                    <span class="btn-glyph" aria-hidden="true">■</span>
+                    <span class="btn-text">HALT</span>
+                </button>
+            </div>
+        </article>
+
+        <article class="module" id="rowTTS_WebUI" data-app="TTS_WebUI">
+            <header class="module-head">
+                <span class="module-id">MOD::05</span>
+                <span class="module-state" data-state="idle">
+                    <span class="dot" aria-hidden="true"></span>
+                    <span class="module-state-text">IDLE</span>
+                </span>
+            </header>
+            <div class="module-body">
+                <h2 class="module-title">TTS&nbsp;WebUI</h2>
+                <p class="module-sub">Speech synthesis &amp; voice cloning</p>
+                <p class="module-note">XTTS · bark · vocoders</p>
+            </div>
+            <div class="module-actions">
+                <button class="btn btn--start" type="button" data-action="start" data-target="tts" data-label="TTS WebUI">
+                    <span class="btn-glyph" aria-hidden="true">▶</span>
+                    <span class="btn-text">INITIATE</span>
+                </button>
+                <button class="btn btn--stop" type="button" data-action="stop" data-target="tts" data-label="TTS WebUI">
+                    <span class="btn-glyph" aria-hidden="true">■</span>
+                    <span class="btn-text">HALT</span>
+                </button>
+            </div>
+        </article>
+    </section>
+
+    <section class="console" aria-label="Event log">
+        <header class="console-head">
+            <span class="console-label">// EVENT LOG</span>
+            <span class="console-meta">tail&nbsp;-f&nbsp;/var/log/appman</span>
+        </header>
+        <ol class="console-lines" id="log" aria-live="polite">
+            <li class="console-line is-muted">
+                <span class="ts">--:--:--</span><span class="arrow">»</span><span>awaiting input</span>
+            </li>
+        </ol>
+    </section>
+
+    <footer class="foot">
+        <span>// app-manager · runpod node</span>
+        <span class="muted">build 2.0.0</span>
+    </footer>
+</main>
+
 <script src="/script.js"></script>
 </body>
 </html>

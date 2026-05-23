@@ -1,72 +1,101 @@
-$(document).ready(function() {
-    $.getJSON("/config.json", function(config) {
-        // Initially hide all rows
-        $("tbody tr").hide();
+(function () {
+    'use strict';
 
-        // Iterate over the applications in the config
-        config.applications.forEach(function(app) {
-            // Construct the row's ID and show it
-            $("#row" + app).show();
-        });
-    });
+    const $  = (sel, ctx = document) => ctx.querySelector(sel);
+    const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
-    $('#stopA111').click(function () {
-        $.get('/stop_a1111', function (data) {
-            alert(data);
-        });
-    });
+    const clockEl = $('#clock');
+    function tick() {
+        const d = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        clockEl.textContent = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
+    }
+    tick();
+    setInterval(tick, 1000);
 
-    $('#startA111').click(function () {
-        $.get('/start_a1111', function (data) {
-            alert(data);
-        });
-    });
+    fetch('/config.json', { cache: 'no-store' })
+        .then(r => r.json())
+        .then(config => {
+            const allowed = new Set(config.applications || []);
+            $$('.module').forEach(el => {
+                if (!allowed.has(el.dataset.app)) el.style.display = 'none';
+            });
+        })
+        .catch(() => { /* if config.json fails, leave all modules visible */ });
 
-    $('#stopKohya').click(function () {
-        $.get('/stop_kohya', function (data) {
-            alert(data);
-        });
-    });
+    const logEl = $('#log');
+    function logLine(level, label, message) {
+        const muted = logEl.querySelector('.is-muted');
+        if (muted) muted.remove();
 
-    $('#startKohya').click(function () {
-        $.get('/start_kohya', function (data) {
-            alert(data);
-        });
-    });
+        const d = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        const ts = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 
-    $('#stopComfyUI').click(function () {
-        $.get('/stop_comfyui', function (data) {
-            alert(data);
-        });
-    });
+        const li = document.createElement('li');
+        li.className = `console-line ${level}`.trim();
+        const tsSpan = document.createElement('span');
+        tsSpan.className = 'ts';
+        tsSpan.textContent = ts;
+        const arrow = document.createElement('span');
+        arrow.className = 'arrow';
+        arrow.textContent = '»';
+        const body = document.createElement('span');
+        const strong = document.createElement('strong');
+        strong.textContent = label;
+        body.appendChild(strong);
+        body.appendChild(document.createTextNode(message));
+        li.appendChild(tsSpan);
+        li.appendChild(arrow);
+        li.appendChild(body);
 
-    $('#startComfyUI').click(function () {
-        $.get('/start_comfyui', function (data) {
-            alert(data);
-        });
-    });
+        logEl.appendChild(li);
+        logEl.scrollTop = logEl.scrollHeight;
 
-    $('#stopInvokeAI').click(function () {
-        $.get('/stop_invokeai', function (data) {
-            alert(data);
-        });
-    });
+        while (logEl.children.length > 50) logEl.removeChild(logEl.firstChild);
+    }
 
-    $('#startInvokeAI').click(function () {
-        $.get('/start_invokeai', function (data) {
-            alert(data);
-        });
-    });
+    document.addEventListener('click', async (evt) => {
+        const btn = evt.target.closest('.btn');
+        if (!btn) return;
 
-    $('#stopTTS').click(function () {
-        $.get('/stop_tts', function (data) {
-            alert(data);
-        });
-    });
+        const action = btn.dataset.action;
+        const target = btn.dataset.target;
+        const label  = btn.dataset.label || target;
+        if (!action || !target) return;
 
-    $('#startTTS').click(function () {
-        $.get('/start_tts', function (data) {
-            alert(data);
-        });
+        const module    = btn.closest('.module');
+        const state     = module && module.querySelector('.module-state');
+        const stateText = state  && state.querySelector('.module-state-text');
+        const siblings  = module ? $$('.btn', module) : [btn];
+
+        siblings.forEach(b => { b.disabled = true; });
+        btn.classList.add('is-busy');
+
+        if (state) {
+            state.dataset.state = action === 'start' ? 'starting' : 'stopping';
+            if (stateText) stateText.textContent = action === 'start' ? 'STARTING' : 'STOPPING';
+        }
+
+        logLine('', label, ` // ${action}…`);
+
+        try {
+            const res = await fetch(`/${action}_${target}`, { cache: 'no-store' });
+            const text = await res.text();
+            if (state) {
+                state.dataset.state = action === 'start' ? 'online' : 'offline';
+                if (stateText) stateText.textContent = action === 'start' ? 'ONLINE' : 'OFFLINE';
+            }
+            logLine('ok', label, ` ${text.trim()}`);
+        } catch (err) {
+            if (state) {
+                state.dataset.state = 'error';
+                if (stateText) stateText.textContent = 'ERROR';
+            }
+            logLine('err', label, ` transport failure: ${err.message}`);
+        } finally {
+            btn.classList.remove('is-busy');
+            siblings.forEach(b => { b.disabled = false; });
+        }
     });
-});
+})();
