@@ -1,6 +1,6 @@
 {
   "name": "app-manager",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "App Manager",
   "main": "app.js",
   "scripts": {
@@ -8,6 +8,6 @@
   },
   "author": "Ashley Kleynhans",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.3.0"
   }
 }

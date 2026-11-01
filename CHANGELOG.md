@@ -5,6 +5,17 @@ All notable changes to this project are documented in this file.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.3] - 2026-11-01
+
+### Changed
+- Bumped `express` from 5.2.1 to 5.3.0, with transitive updates `body-parser` 2.3.0 -> 2.4.0, `content-disposition` 1.1.0 -> 2.0.1, `content-type` 1.0.5 -> 2.1.0, `proxy-addr` 2.0.7 -> 2.0.8, and `qs` 6.16.0 -> 6.17.1.
+- Collapsed duplicate nested `content-type` copies into a single top-level `2.1.0` install.
+- Updated the footer build label in the UI from `2.0.0` to `2.0.3`.
+
+### Security
+- Fixes `body-parser` denial-of-service via trailing bytes after a compressed request body (GHSA-27r3-jxmh-p828).
+- Fixes `qs` uncaught `TypeError` DoS in `qs.stringify` with `arrayFormat: 'comma'` (GHSA-6pq8-jhm2-2vcw).
+
 ## [2.0.2] - 2026-09-04
 
 ### Changed
